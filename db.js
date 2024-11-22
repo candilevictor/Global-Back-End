@@ -27,10 +27,12 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS lighting (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT,
       intensity INTEGER,
       status BOOLEAN,
       consumoEnergia REAL,
-      economiaEnergia REAL DEFAULT 0  -- Coluna para armazenar economia de energia
+      economiaEnergia REAL DEFAULT 0,  -- Coluna para armazenar economia de energia
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 
@@ -54,10 +56,10 @@ db.serialize(() => {
   const initialStatus = false;
   const initialConsumoEnergia = calcularConsumoEnergia(initialIntensity); // Calculando o consumo de energia com base na intensidade inicial
 
-  // Inserção de uma nova linha de iluminação
+  // Inserção de uma nova linha de iluminação (sem atualizar a existente)
   db.run(
-    'INSERT INTO lighting (intensity, status, consumoEnergia) VALUES (?, ?, ?)',
-    [initialIntensity, initialStatus, initialConsumoEnergia],
+    'INSERT INTO lighting (username, intensity, status, consumoEnergia) VALUES (?, ?, ?, ?)',
+    ['admin', initialIntensity, initialStatus, initialConsumoEnergia],
     function (err) {
       if (err) {
         console.error('Erro ao inserir nova linha de iluminação:', err.message);
